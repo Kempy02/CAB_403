@@ -3,7 +3,15 @@
 #include "dbl_vector.h"
 
 void dv_init( dbl_vector_t* vec ) {
-    // INSERT SOLUTION HERE
+
+    vec->size = 0;
+    vec->capacity = DV_INITIAL_CAPACITY;
+    vec->data = (double*) malloc(vec->capacity * sizeof(double));
+    // if (!vec->data) {
+    //     printf("Memory allocation failed!\n");
+    //     exit(1);
+    // }
+
 }
 
 void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) {
