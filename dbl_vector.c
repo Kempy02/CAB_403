@@ -5,8 +5,14 @@
 void dv_init( dbl_vector_t* vec ) {
 
     vec->size = 0;
+    // size_t old_size = vec->size;
+
     vec->capacity = DV_INITIAL_CAPACITY;
-    vec->data = (double*) malloc(vec->capacity * sizeof(double));
+    // size_t old_capacity = vec->capacity;
+
+    size_t new_mem_size = vec->capacity * sizeof(double);
+
+    vec->data = (double*) malloc(new_mem_size);
     // if (!vec->data) {
     //     printf("Memory allocation failed!\n");
     //     exit(1);
@@ -14,8 +20,33 @@ void dv_init( dbl_vector_t* vec ) {
 
 }
 
+// #define CEIL_DIV(a, b) (((a) + (b) - 1) / (b))
+// #define CALC_NEW_CAPACITY(old_capacity, new_size, growth_factor) \
+//     (old_capacity * CEIL_DIV(new_size, old_capacity * growth_factor))
+
 void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) {
-    // INSERT SOLUTION HERE
+
+    if (new_size > vec->capacity) {
+
+        size_t new_capacity = vec->capacity * DV_GROWTH_FACTOR;
+        
+        // Continue increasing capacity until it's enough
+        while (new_capacity < new_size) {
+            new_capacity *= DV_GROWTH_FACTOR;
+        }
+
+        // Reallocate memory with the new capacity
+        vec->data = realloc(vec->data, new_capacity * sizeof(double));
+        // if (!vec->data) {
+        //     printf("Memory reallocation failed!\n");
+        //     exit(1);  // Exit if memory allocation fails
+        // }
+
+        // Update the vector's capacity
+        vec->capacity = new_capacity;
+    }
+    // else: capacity is already enough, no need to reallocate memory
+
 }
 
 void dv_destroy( dbl_vector_t* vec ) {
