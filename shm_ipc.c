@@ -14,7 +14,6 @@
 
 // References:
 // *   https://man7.org/training/download/ipc_pshm_slides.pdf
-Links to an external site.
 // *   CAB403 Topic 3 lecture notes and practical.
 
 // Compile with flags: -lrt -lpthread
@@ -57,23 +56,35 @@ char* op_names[] = {
  */
 bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
     // Remove any previous instance of the shared memory object, if it exists.
-    // INSERT SOLUTION HERE
+    shm_unlink(share_name);  // Remove previous shared memory object
 
     // Assign share name to shm->name.
-    // INSERT SOLUTION HERE
+    shm->name = share_name;
 
     // Create the shared memory object, allowing read-write access by all users,
     // and saving the resulting file descriptor in shm->fd. If creation failed,
     // ensure that shm->data is NULL and return false.
-    // INSERT SOLUTION HERE
+    shm->fd = shm_open(share_name, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+    // mode = 0 if opening existing project, but set all user r-w?
+    if (shm->fd < 0) {
+        shm->data = NULL;
+        return false;
+    }
 
     // Set the capacity of the shared memory object via ftruncate. If the 
     // operation fails, ensure that shm->data is NULL and return false. 
-    // INSERT SOLUTION HERE
+    if (ftruncate(shm->fd, sizeof(shared_data_t)) != 0) {
+        shm->data = NULL;
+        return false;
+    }
 
     // Otherwise, attempt to map the shared memory via mmap, and save the address
     // in shm->data. If mapping fails, return false.
-    // INSERT SOLUTION HERE
+    shm->data = mmap(0, sizeof(shared_data_t), PROT_READ | PROT_WRITE, MAP_SHARED, shm->fd, 0);
+    if (shm->data == MAP_FAILED) {
+        // Return false, but do not set shm->data to NULL
+        return false;
+    }
 
     // Do not alter the following semaphore initialisation code.
     sem_init( &shm->data->controller_semaphore, 1, 0 );
@@ -100,7 +111,16 @@ bool create_shared_object( shared_memory_t* shm, const char* share_name ) {
  */
 void destroy_shared_object( shared_memory_t* shm ) {
     // Remove the shared memory object.
-    // INSERT SOLUTION HERE
+    // Unmap the shared memory from the process's address space.
+    munmap(shm->data, sizeof(shared_data_t));
+
+    // Unlink the shared memory object to remove it from the system.
+    shm_unlink(shm->name);
+
+    // Invalidate the file descriptor and the data pointer.
+    shm->fd = -1;
+    shm->data = NULL;
+
 }
 
 /**
