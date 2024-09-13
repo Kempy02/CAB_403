@@ -5,24 +5,14 @@
 void dv_init( dbl_vector_t* vec ) {
 
     vec->size = 0;
-    // size_t old_size = vec->size;
 
     vec->capacity = DV_INITIAL_CAPACITY;
-    // size_t old_capacity = vec->capacity;
 
     size_t new_mem_size = vec->capacity * sizeof(double);
 
     vec->data = (double*) malloc(new_mem_size);
-    // if (!vec->data) {
-    //     printf("Memory allocation failed!\n");
-    //     exit(1);
-    // }
 
 }
-
-// #define CEIL_DIV(a, b) (((a) + (b) - 1) / (b))
-// #define CALC_NEW_CAPACITY(old_capacity, new_size, growth_factor) \
-//     (old_capacity * CEIL_DIV(new_size, old_capacity * growth_factor))
 
 void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) {
 
@@ -37,10 +27,6 @@ void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) {
 
         // Reallocate memory with the new capacity
         vec->data = realloc(vec->data, new_capacity * sizeof(double));
-        // if (!vec->data) {
-        //     printf("Memory reallocation failed!\n");
-        //     exit(1);  // Exit if memory allocation fails
-        // }
 
         // Update the vector's capacity
         vec->capacity = new_capacity;
@@ -51,10 +37,6 @@ void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) {
 
 void dv_destroy( dbl_vector_t* vec ) {
     
-    // if (vec->data != NULL) {
-    //     free(vec->data);  // Free the allocated memory
-    //     vec->data = NULL;  // Prevent dangling pointer
-    // }
     free(vec->data);
     vec->size = 0;        // Reset the size
     vec->capacity = 0;    // Reset the capacity
