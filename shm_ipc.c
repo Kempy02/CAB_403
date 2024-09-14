@@ -183,7 +183,7 @@ bool get_shared_object( shared_memory_t* shm, const char* share_name ) {
     // Get a file descriptor connected to shared memory object and save in 
     // shm->fd. If the operation fails, ensure that shm->data is 
     // NULL and return false.
-    shm->fd = shm_open(share_name, O_RDWR, 0);  // Open with read-write access
+    shm->fd = shm_open(share_name, O_RDWR, 0666);  // Open with read-write access
     if (shm->fd < 0) {
         // If opening fails, set shm->data to NULL and return false
         shm->data = NULL;
