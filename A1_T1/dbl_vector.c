@@ -18,7 +18,7 @@ void dv_ensure_capacity( dbl_vector_t* vec, size_t new_size ) {
 
     if (new_size > vec->capacity) {
 
-        size_t new_capacity = vec->capacity * DV_GROWTH_FACTOR;
+        size_t new_capacity = vec->capacity; //* DV_GROWTH_FACTOR;
         
         // Continue increasing capacity until it's enough
         while (new_capacity < new_size) {
